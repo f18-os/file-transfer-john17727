@@ -1,0 +1,8 @@
+Hi!
+This is a file. It is my file.
+I made it to test the servers and clients i have to code.
+So far so good; everything is working fine.
+I got most things to work but i just need the server to be able to save it as a file.
+Server now saves the file but throws a stupid error saying that it can't 
+make a non type variable into a string but then goes ahead and does it anyway.
+Hence why all of this is saved on the server's file.
