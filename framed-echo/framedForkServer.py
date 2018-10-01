@@ -1,9 +1,9 @@
 #! /usr/bin/env python3
 
-
-import sys, os, socket
 sys.path.append("../lib")       # for params
-import params
+
+import sys, os, socket, params
+
 
 switchesVarDefaults = (
     (('-l', '--listenPort') ,'listenPort', 50001),
@@ -32,16 +32,11 @@ while True:
 
     if not os.fork():
         print("new child process handling connection from", addr)
-        aFile = open("file-server.txt","w")
         while True:
             payload = framedReceive(sock, debug)
-            payload = payload + b'\n'
-            aFile.write(payload.decode())
             if debug: print("rec'd: ", payload)
             if not payload:
                 if debug: print("child exiting")
-                sys.exit(0)  
-            '''
+                sys.exit(0)
+            payload += b"!"             # make emphatic!
             framedSend(sock, payload, debug)
-            '''
-        aFile.close()

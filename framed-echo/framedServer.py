@@ -1,9 +1,7 @@
 #! /usr/bin/env python3
 
-
-import sys, re, socket
 sys.path.append("../lib")       # for params
-import params
+import sys, re, socket, params
 
 switchesVarDefaults = (
     (('-l', '--listenPort') ,'listenPort', 50001),
@@ -32,16 +30,10 @@ print("connection rec'd from", addr)
 
 from framedSock import framedSend, framedReceive
 
-aFile = open("file-server.txt","w")
 while True:
     payload = framedReceive(sock, debug)
-    payload = payload + b'\n'
-    aFile.write(payload.decode())
     if debug: print("rec'd: ", payload)
     if not payload:
         break
-    '''
     payload += b"!"             # make emphatic!
     framedSend(sock, payload, debug)
-    '''
-aFile.close()

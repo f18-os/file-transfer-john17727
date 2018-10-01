@@ -57,15 +57,6 @@ if s is None:
     sys.exit(1)
 
 
-fileName = input("What is the name of the file? (Use extensions): ")
-aFile = open(fileName, "r")
-for line in aFile:
-    line = line.strip()
-    line = line.encode('utf-8')
-    framedSend(s, line, debug)
-aFile.close()
-
-'''
 print("sending hello world")
 framedSend(s, b"hello world", debug)
 print("received:", framedReceive(s, debug))
@@ -73,4 +64,3 @@ print("received:", framedReceive(s, debug))
 print("sending hello world")
 framedSend(s, b"hello world", debug)
 print("received:", framedReceive(s, debug))
-'''
