@@ -1,5 +1,13 @@
 # File Transfer Lab
 
+Included are:
+* framedClient.py
+* framedServer.py
+* framedForkServer.py
+* framedSock.py
+* pycache folder - Put that in there just to be safe.
+* testFile.txt - A file to test the program with. Can make your own but has to be in the same directory.
+
 ## framedClient.py
 Asks for the name of a file to transfer to server. File must be in the same directory.
 ```python
@@ -13,7 +21,7 @@ aFile.close()
 ```
 
 ## framedServer.py
-Gets the information of a file from the socket and saves it as a new file. The name of the file will be *file-server.txt* to differentiate it form the original file.
+Gets the information of a file from the socket and saves it as a new file. The name of the file will be *file-server.txt* to differentiate it from the original file. Gives an error because it thinks the variable payload is a nontype but it's of type bytes, so it decodes it to a string none the less. I couldn't get rid of the error for the life of me but the program still works.
 ```python
 aFile = open("file-server.txt","w")
 while True:
@@ -31,7 +39,7 @@ aFile.close()
 ```
 
 ## framedForkServer.py
-Same as *framedServer.py* but with forking.
+Same as *framedServer.py* but with forking. Gives same error.
 ```python
 while True:
     sock, addr = lsock.accept()
