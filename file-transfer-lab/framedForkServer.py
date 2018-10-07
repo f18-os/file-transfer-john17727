@@ -32,16 +32,27 @@ while True:
 
     if not os.fork():
         print("new child process handling connection from", addr)
-        aFile = open("file-server.txt","w")
+        name = framedReceive(sock, debug)
+        name = name.decode()
+        name = name[:-4]
+        name = name + "-server.txt"
+        if os.path.isfile(name):
+            name = name[:-4]
+            name = name + "(1).txt"
+            count = 2;
+            while os.path.isfile(name):
+                name = name[:-7]
+                name = name + "(" + str(count) + ").txt"
+                count += 1
+
+        aFile = open(name,"w")
         while True:
-            payload = framedReceive(sock, debug)
-            payload = payload + b'\n'
-            aFile.write(payload.decode())
-            if debug: print("rec'd: ", payload)
-            if not payload:
+            line = framedReceive(sock, debug)
+            line = line + b'\n'
+            line = line.decode()
+            aFile.write(line)
+            if debug: print("rec'd: ", line)
+            if not line:
                 if debug: print("child exiting")
                 sys.exit(0)  
-            '''
-            framedSend(sock, payload, debug)
-            '''
         aFile.close()

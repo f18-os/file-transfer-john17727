@@ -57,10 +57,19 @@ if s is None:
     sys.exit(1)
 
 
-fileName = input("What is the name of the file? (Use extensions): ")
-aFile = open(fileName, "r")
-for line in aFile:
+while True:
+    fileName = input("What is the name of the file? (Use extensions): ")
+    try:
+        readFile = open(fileName, "r")
+        break
+    except FileNotFoundError as fileError:
+        print(fileError)
+        print("Please try again.")
+
+fileName = fileName.encode()
+framedSend(s, fileName, debug)
+for line in readFile:
     line = line.strip()
-    line = line.encode('utf-8')
+    line = line.encode()
     framedSend(s, line, debug)
-aFile.close()
+readFile.close()

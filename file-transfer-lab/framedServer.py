@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 
-import sys, re, socket
+import sys, re, socket, os
 sys.path.append("../lib")       # for params
 import params
 
@@ -32,16 +32,27 @@ print("connection rec'd from", addr)
 
 from framedSock import framedSend, framedReceive
 
-aFile = open("file-server.txt","w")
+name = framedReceive(sock, debug)
+name = name.decode()
+name = name[:-4]
+name = name + "-server.txt"
+if os.path.isfile(name):
+    name = name[:-4]
+    name = name + "(1).txt"
+    count = 2;
+    while os.path.isfile(name):
+        name = name[:-7]
+        name = name + "(" + str(count) + ").txt"
+        count += 1
+
+aFile = open(name,"w")
 while True:
-    payload = framedReceive(sock, debug)
-    payload = payload + b'\n'
-    aFile.write(payload.decode())
-    if debug: print("rec'd: ", payload)
-    if not payload:
-        break
-    '''
-    payload += b"!"             # make emphatic!
-    framedSend(sock, payload, debug)
-    '''
+    line = framedReceive(sock, debug)
+    line = line + b'\n'
+    line = line.decode()
+    aFile.write(line)
+    if debug: print("rec'd: ", line)
+    if not line:
+        if debug: print("child exiting")
+        break 
 aFile.close()

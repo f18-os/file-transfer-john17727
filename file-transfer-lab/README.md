@@ -11,30 +11,50 @@ Included are:
 ## framedClient.py
 Asks for the name of a file to transfer to server. File must be in the same directory.
 ```python
-fileName = input("What is the name of the file? (Use extensions): ")
-aFile = open(fileName, "r")
-for line in aFile:
+while True:
+    fileName = input("What is the name of the file? (Use extensions): ")
+    try:
+        readFile = open(fileName, "r")
+        break
+    except FileNotFoundError as fileError:
+        print(fileError)
+        print("Please try again.")
+
+fileName = fileName.encode()
+framedSend(s, fileName, debug)
+for line in readFile:
     line = line.strip()
-    line = line.encode('utf-8')
+    line = line.encode()
     framedSend(s, line, debug)
-aFile.close()
+readFile.close()
 ```
 
 ## framedServer.py
-Gets the information of a file from the socket and saves it as a new file. The name of the file will be *file-server.txt* to differentiate it from the original file. Gives an error because it thinks the variable payload is a nontype but it's of type bytes, so it decodes it to a string none the less. I couldn't get rid of the error for the life of me but the program still works.
+Gets the name of the file to be transferred and checks if it is already on the server side. If there is one the server makes copy of the new one and its contents. The name of the file saved by the server will be appended with *-server* to differentiate it from the original file. Gives an error because it thinks the variable payload is a nontype but it's of type bytes, so it decodes it to a string none the less. I couldn't get rid of the error for the life of me but the program still works.
 ```python
-aFile = open("file-server.txt","w")
+name = framedReceive(sock, debug)
+name = name.decode()
+name = name[:-4]
+name = name + "-server.txt"
+if os.path.isfile(name):
+    name = name[:-4]
+    name = name + "(1).txt"
+    count = 2;
+    while os.path.isfile(name):
+        name = name[:-7]
+        name = name + "(" + str(count) + ").txt"
+        count += 1
+
+aFile = open(name,"w")
 while True:
-    payload = framedReceive(sock, debug)
-    payload = payload + b'\n'
-    aFile.write(payload.decode())
-    if debug: print("rec'd: ", payload)
-    if not payload:
-        break
-    '''
-    payload += b"!"             # make emphatic!
-    framedSend(sock, payload, debug)
-    '''
+    line = framedReceive(sock, debug)
+    line = line + b'\n'
+    line = line.decode()
+    aFile.write(line)
+    if debug: print("rec'd: ", line)
+    if not line:
+        if debug: print("child exiting")
+        break 
 aFile.close()
 ```
 
@@ -48,18 +68,29 @@ while True:
 
     if not os.fork():
         print("new child process handling connection from", addr)
-        aFile = open("file-server.txt","w")
+        name = framedReceive(sock, debug)
+        name = name.decode()
+        name = name[:-4]
+        name = name + "-server.txt"
+        if os.path.isfile(name):
+            name = name[:-4]
+            name = name + "(1).txt"
+            count = 2;
+            while os.path.isfile(name):
+                name = name[:-7]
+                name = name + "(" + str(count) + ").txt"
+                count += 1
+
+        aFile = open(name,"w")
         while True:
-            payload = framedReceive(sock, debug)
-            payload = payload + b'\n'
-            aFile.write(payload.decode())
-            if debug: print("rec'd: ", payload)
-            if not payload:
+            line = framedReceive(sock, debug)
+            line = line + b'\n'
+            line = line.decode()
+            aFile.write(line)
+            if debug: print("rec'd: ", line)
+            if not line:
                 if debug: print("child exiting")
                 sys.exit(0)  
-            '''
-            framedSend(sock, payload, debug)
-            '''
         aFile.close()
 ```
 
