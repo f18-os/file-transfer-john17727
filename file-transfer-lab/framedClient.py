@@ -2,11 +2,8 @@
 
 # Echo client program
 import socket, sys, re
-
-sys.path.append("../lib")       # for params
 import params
-
-from framedSock import framedSend, framedReceive
+from framedSock import FramedStreamSock
 
 
 switchesVarDefaults = (
@@ -56,7 +53,7 @@ if s is None:
     print('could not open socket')
     sys.exit(1)
 
-
+fileSend = FramedStreamSock(s, debug=debug)
 while True:
     fileName = input("What is the name of the file? (Use extensions): ")
     try:
@@ -67,9 +64,9 @@ while True:
         print("Please try again.")
 
 fileName = fileName.encode()
-framedSend(s, fileName, debug)
+fileSend.sendmsg(fileName)
 for line in readFile:
     line = line.strip()
     line = line.encode()
-    framedSend(s, line, debug)
+    fileSend.sendmsg(line)
 readFile.close()
