@@ -10,3 +10,4 @@ Helped in trivial code such as:
 * String concatenation
 * String to bytes conversion and vice versa
 * Exception handling
+* mutex locks handling

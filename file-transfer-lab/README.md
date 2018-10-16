@@ -2,6 +2,7 @@
 
 Included are:
 * framedClient.py
+* framedThreadClient.py
 * framedServer.py
 * framedForkServer.py
 * framedSock.py
@@ -29,8 +30,11 @@ for line in readFile:
 readFile.close()
 ```
 
+## framedThreadClient.py
+Same as framedClient but utilizes threads and locks to send a file or files across.
+
 ## framedServer.py
-Gets the name of the file to be transferred and checks if it is already on the server side. If there is one the server makes copy of the new one and its contents. The name of the file saved by the server will be appended with *-server* to differentiate it from the original file. Gives an error because it thinks the variable payload is a nontype but it's of type bytes, so it decodes it to a string none the less. I couldn't get rid of the error for the life of me but the program still works.
+Now utilizes threads and locks to get the message across correctly. Gets the name of the file to be transferred and checks if it is already on the server side. If there is one the server makes copy of the new one and its contents. The name of the file saved by the server will be appended with *-server* to differentiate it from the original file. Gives an error because it thinks the variable payload is a nontype but it's of type bytes, so it decodes it to a string none the less. I couldn't get rid of the error for the life of me but the program still works.
 ```python
 name = framedReceive(sock, debug)
 name = name.decode()
@@ -95,4 +99,4 @@ while True:
 ```
 
 ## framedSock.py
-This is the origianl program provided. Nothing has been modified.
+This is the original program provided from the emphaticDemo. Nothing has been modified.
