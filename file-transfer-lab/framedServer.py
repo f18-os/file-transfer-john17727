@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import sys, os, socket, params, time
-from threading import Thread
+from threading import Thread, Lock
 from framedSock import FramedStreamSock
 
 switchesVarDefaults = (
@@ -31,6 +31,7 @@ class ServerThread(Thread):
         self.fsock, self.debug = FramedStreamSock(sock, debug), debug
         self.start()
     def run(self):
+        mutex.acquire()
         name = self.fsock.receivemsg()
         name = name.decode()
         name = name[:-4]
@@ -55,7 +56,9 @@ class ServerThread(Thread):
                 if debug: print("child exiting")
                 break 
         aFile.close()
+        mutex.release()
 
+mutex = Lock()
 while True:
     sock, addr = lsock.accept()
     ServerThread(sock, debug)
